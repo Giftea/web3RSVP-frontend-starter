@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import getRandomImage from "../utils/getRandomImage";
 import { ethers } from "ethers";
-import connectContract from "../utils/connectContract";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import Alert from "../components/Alert";
+import connectContract from "../utils/connectContract";
+import getRandomImage from "../utils/getRandomImage";
 
 export default function CreateEvent() {
+  const { data: account } = useAccount();
+
   const [eventName, setEventName] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [eventTime, setEventTime] = useState("");
@@ -16,7 +18,7 @@ export default function CreateEvent() {
   const [refund, setRefund] = useState("");
   const [eventLink, setEventLink] = useState("");
   const [eventDescription, setEventDescription] = useState("");
-  const { data: account } = useAccount();
+
   const [success, setSuccess] = useState(null);
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(null);
@@ -24,6 +26,7 @@ export default function CreateEvent() {
 
   async function handleSubmit(e) {
     e.preventDefault();
+
     const body = {
       name: eventName,
       description: eventDescription,
@@ -69,10 +72,12 @@ export default function CreateEvent() {
           eventDataCID,
           { gasLimit: 900000 }
         );
+
         setLoading(true);
         console.log("Minting...", txn.hash);
         let wait = await txn.wait();
         console.log("Minted -- ", txn.hash);
+
         setEventID(wait.events[0].args[0]);
         setSuccess(true);
         setLoading(false);

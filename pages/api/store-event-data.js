@@ -13,6 +13,7 @@ export default async function handler(req, res) {
 
 async function storeEventData(req, res) {
   const body = req.body;
+  console.log(body);
   try {
     const files = await makeFileObjects(body);
     const cid = await storeFiles(files);
